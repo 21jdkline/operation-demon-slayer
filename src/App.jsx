@@ -464,6 +464,19 @@ const TodayTab = ({ currentDay, currentWeek, completed, setCompleted, onLog, set
             <Moon className="w-5 h-5" style={{ color: '#5E35B1' }} /><span className="text-xs text-gray-600">Tape</span>
           </button>
           <button onClick={() => {
+              const choices = ['Left', 'Right', 'Both'];
+              const choice = window.prompt('Nostril dominance? (Left / Right / Both)');
+              if (!choice) return;
+              const normalized = choices.find(c => c.toLowerCase() === choice.trim().toLowerCase());
+              if (!normalized) { window.alert('Please enter Left, Right, or Both'); return; }
+              onLog({ type: 'nostrilDominance', value: normalized });
+              setCompleted(prev => ({ ...prev, nostrilCheck: true }));
+              window.alert(`Logged nostril: ${normalized}`);
+            }}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Wind className="w-5 h-5" style={{ color: '#7B1FA2' }} /><span className="text-xs text-gray-600">Nostril</span>
+          </button>
+          <button onClick={() => {
               const left = window.prompt('Left hand grip (kg)?'); if (!left || isNaN(left)) return;
               const right = window.prompt('Right hand grip (kg)?'); if (!right || isNaN(right)) return;
               onLog({ type: 'gripStrength', value: { left: parseFloat(left), right: parseFloat(right) } });
@@ -484,25 +497,6 @@ const TodayTab = ({ currentDay, currentWeek, completed, setCompleted, onLog, set
             className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
             <Heart className="w-5 h-5" style={{ color: '#E53935' }} /><span className="text-xs text-gray-600">HRR</span>
           </button>
-          <div className="flex flex-col items-center gap-1 p-3 rounded-lg">
-            {/* Placeholder for grid alignment */}
-          </div>
-        </div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nostril Dominance</h4>
-        <div className="grid grid-cols-3 gap-2">
-          {NOSTRIL_OPTIONS.map(option => (
-            <button
-              key={option}
-              onClick={() => {
-                onLog({ type: 'nostrilDominance', value: option });
-                setCompleted(prev => ({ ...prev, nostrilCheck: true }));
-                window.alert(`Logged nostril: ${option}`);
-              }}
-              className="p-2 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100"
-            >
-              {option === 'Left' ? '← Left' : option === 'Right' ? 'Right →' : '= Equal'}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -1675,6 +1669,9 @@ const SetupTab = () => {
             className="flex items-center gap-2 p-3 bg-teal-50 text-teal-700 rounded-lg text-sm font-medium">
             <Brain className="w-4 h-4" /> Attention Span
           </a>
+          <div className="flex items-center gap-2 p-3 bg-gray-50 text-gray-600 rounded-lg text-sm font-medium">
+            <Brain className="w-4 h-4" /> TMT-Lite <span className="text-xs text-gray-400">(Phone app)</span>
+          </div>
           <a href="https://cloud.ouraring.com" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 p-3 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
             <Moon className="w-4 h-4" /> Oura Dashboard

@@ -24,14 +24,22 @@ A personal ADHD protocol tracking app with breathing exercises, workout logging,
 - Home KB/BB
 - Daily Mobility
 
-### Cognitive Tests (Every Sunday — All 5 Tests)
-- **TMT-A & B** — Trail Making Test via TMT-Lite phone app
-- **Stroop** — https://3rrzyovd9q.cognition.run (laptop/keyboard required)
-- **Flanker** — https://bc50jfnfsa.cognition.run (laptop/keyboard required)
-- **Go/No-Go** — https://sketgsdcac.cognition.run (laptop/keyboard required)
-- **Attention Span** — https://g0zegupaji.cognition.run (laptop/keyboard required)
-- **Reaction Time** — Daily via Human Benchmark
-- **ASRS-6 Questionnaire** — Weekly self-report
+### Weekly Cognitive Battery
+
+All tests performed every Sunday, 8-9am. Odd weeks = UNMEDICATED, Even weeks = MEDICATED.
+
+| Test | Measures | Platform |
+|------|----------|----------|
+| **TMT-A & B** | Processing speed, cognitive flexibility | TMT-Lite (phone app) |
+| **Stroop** | Response inhibition | [cognition.run](https://3rrzyovd9q.cognition.run) |
+| **Flanker** | Conflict monitoring, selective attention | [cognition.run](https://bc50jfnfsa.cognition.run) |
+| **Go/No-Go** | Impulse control | [cognition.run](https://sketgsdcac.cognition.run) |
+| **Attention Span** | Sustained attention | [cognition.run](https://g0zegupaji.cognition.run) |
+
+> Stroop, Flanker, Go/No-Go, and Attention Span require a laptop/desktop with keyboard.
+
+**Daily:** Reaction Time via [Human Benchmark](https://humanbenchmark.com/tests/reactiontime)
+**Weekly:** ASRS-6 Questionnaire (self-report)
 
 ## 🚀 Quick Start
 
