@@ -434,24 +434,10 @@ const TodayTab = ({ currentDay, currentWeek, completed, setCompleted, onLog, set
 
       <div className="bg-white rounded-xl p-4 shadow-sm">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Quick Log</h3>
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          {NOSTRIL_OPTIONS.map(option => (
-            <button
-              key={option}
-              onClick={() => {
-                onLog({ type: 'nostrilDominance', value: option });
-                setCompleted(prev => ({ ...prev, nostrilCheck: true }));
-                window.alert(`Logged nostril: ${option}`);
-              }}
-              className="p-2 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100"
-            >
-              {option === 'Left' ? '← Left' : option === 'Right' ? 'Right →' : '= Equal'}
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-4 gap-2 mb-3">
           {[
             { id: 'weight', icon: Scale, color: '#00897B', label: 'Weight', prompt: 'Weight (lbs)?', type: 'weight' },
+            { id: 'hrv', icon: Activity, color: '#1565C0', label: 'HRV', prompt: 'Morning HRV (rMSSD)?', type: 'morningHRV' },
             { id: 'mackenzie', icon: Wind, color: '#1F4E79', label: 'Exhale', prompt: 'Mackenzie exhale (seconds)?', type: 'mackenzieExhale' },
             { id: 'reaction', icon: Timer, color: '#7B1FA2', label: 'Reaction', prompt: 'Reaction time (ms)?', type: 'reaction' },
             { id: 'hrr', icon: Heart, color: '#C62828', label: 'HRR', prompt: 'Heart Rate Recovery (bpm drop)?', type: 'hrr' },
@@ -472,6 +458,39 @@ const TodayTab = ({ currentDay, currentWeek, completed, setCompleted, onLog, set
             >
               <item.icon className="w-5 h-5" style={{ color: item.color }} />
               <span className="text-xs text-gray-600">{item.label}</span>
+            </button>
+          ))}
+          <button
+            onClick={() => {
+              if (window.confirm('Did you use mouth tape last night?')) {
+                onLog({ type: 'mouthTape', value: 'Yes' });
+                setCompleted(prev => ({ ...prev, mouthTapeCheck: true }));
+                window.alert('Logged mouth tape: Yes');
+              } else {
+                onLog({ type: 'mouthTape', value: 'No' });
+                setCompleted(prev => ({ ...prev, mouthTapeCheck: true }));
+                window.alert('Logged mouth tape: No');
+              }
+            }}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100"
+          >
+            <Moon className="w-5 h-5" style={{ color: '#5E35B1' }} />
+            <span className="text-xs text-gray-600">Tape</span>
+          </button>
+        </div>
+        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nostril Dominance</h4>
+        <div className="grid grid-cols-3 gap-2">
+          {NOSTRIL_OPTIONS.map(option => (
+            <button
+              key={option}
+              onClick={() => {
+                onLog({ type: 'nostrilDominance', value: option });
+                setCompleted(prev => ({ ...prev, nostrilCheck: true }));
+                window.alert(`Logged nostril: ${option}`);
+              }}
+              className="p-2 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 hover:bg-purple-100"
+            >
+              {option === 'Left' ? '← Left' : option === 'Right' ? 'Right →' : '= Equal'}
             </button>
           ))}
         </div>
@@ -865,21 +884,12 @@ const ProtocolsTab = ({ onLog, onComplete }) => {
 // TESTS TAB
 // ============================================
 
-// Deep test schedule - which test for which week
-const DEEP_TEST_SCHEDULE = {
-  1: 'TMT', 2: 'TMT',
-  3: 'N-Back', 4: 'N-Back', 
-  5: 'Go/No-Go', 6: 'Go/No-Go',
-  7: 'TMT', 8: 'TMT',
-  9: 'N-Back', 10: 'N-Back',
-  11: 'Go/No-Go', 12: 'Go/No-Go',
-};
-
+// All 5 cognitive tests run every Sunday
 const DEEP_TEST_INFO = {
   'TMT': {
     name: 'Trail Making Test (TMT-A & B)',
     description: 'Executive function, processing speed, task switching. TMT-B specifically tests cognitive flexibility.',
-    url: 'https://www.psytoolkit.org/experiment-library/tmt.html',
+    note: 'Use TMT-Lite phone app',
     instructions: [
       'TMT-A: Connect numbers 1-25 in order as fast as possible',
       'TMT-B: Alternate numbers and letters (1-A-2-B-3-C...)',
@@ -889,23 +899,36 @@ const DEEP_TEST_INFO = {
     fields: ['tmtA', 'tmtB'],
     fieldLabels: ['TMT-A Time (sec)', 'TMT-B Time (sec)'],
   },
-  'N-Back': {
-    name: 'N-Back Working Memory Test',
-    description: 'Working memory under cognitive load. More demanding than simple span tests.',
-    url: 'https://brainscale.net/dual-n-back',
+  'Stroop': {
+    name: 'Stroop Test',
+    description: 'Measures selective attention and cognitive flexibility by naming ink colors of color words.',
+    url: 'https://3rrzyovd9q.cognition.run',
     instructions: [
-      'Start with 2-back, progress to 3-back if able',
-      'Press when current matches item from N positions ago',
-      'Complete 20 trials minimum',
-      'Record accuracy percentage and highest N level',
+      'Name the ink color, not the word itself',
+      'Go as fast as possible while staying accurate',
+      'Complete all trials presented',
+      'Record your score at the end',
     ],
-    fields: ['nBackAccuracy', 'nBackLevel'],
-    fieldLabels: ['Accuracy (%)', 'Highest N Level'],
+    fields: ['stroopScore'],
+    fieldLabels: ['Stroop Score'],
+  },
+  'Flanker': {
+    name: 'Flanker Test',
+    description: 'Measures attention and inhibitory control by identifying a target among distractors.',
+    url: 'https://bc50jfnfsa.cognition.run',
+    instructions: [
+      'Focus on the center arrow/stimulus',
+      'Indicate the direction of the center target',
+      'Ignore the flanking distractors',
+      'Record your accuracy and reaction time',
+    ],
+    fields: ['flankerAcc', 'flankerRT'],
+    fieldLabels: ['Accuracy (%)', 'Avg Reaction Time (ms)'],
   },
   'Go/No-Go': {
     name: 'Go/No-Go Response Inhibition Test',
     description: 'Measures impulse control and response inhibition - a core ADHD deficit.',
-    url: 'https://www.psytoolkit.org/experiment-library/gonogo.html',
+    url: 'https://sketgsdcac.cognition.run',
     instructions: [
       'Press spacebar for "Go" stimuli (e.g., green)',
       'Do NOT press for "No-Go" stimuli (e.g., red)',
@@ -915,22 +938,43 @@ const DEEP_TEST_INFO = {
     fields: ['goNoGoRT', 'goNoGoErrors'],
     fieldLabels: ['Avg Reaction Time (ms)', 'Commission Errors'],
   },
+  'Attention Span': {
+    name: 'Attention Span Test',
+    description: 'Measures sustained attention and vigilance over time.',
+    url: 'https://g0zegupaji.cognition.run',
+    instructions: [
+      'Follow the on-screen instructions carefully',
+      'Stay focused for the entire duration',
+      'Respond as quickly and accurately as possible',
+      'Record your final score',
+    ],
+    fields: ['attentionScore'],
+    fieldLabels: ['Attention Score'],
+  },
 };
 
 const TestsTab = ({ onLog, currentWeek }) => {
   const [asrs6, setAsrs6] = useState(Array(6).fill(null));
-  const [cogScores, setCogScores] = useState({ spatial: '', feature: '', stroop: '' });
   const [deepTestScores, setDeepTestScores] = useState({});
   const [gripStrength, setGripStrength] = useState({ left: '', right: '' });
-  
+
   const asrs6Total = asrs6.reduce((a, b) => a + (b || 0), 0);
   const isOddWeek = currentWeek % 2 === 1;
   const medicationStatus = isOddWeek ? 'UNMEDICATED' : 'MEDICATED';
-  const currentDeepTest = DEEP_TEST_SCHEDULE[currentWeek] || 'TMT';
-  const deepTestInfo = DEEP_TEST_INFO[currentDeepTest];
+  const allTests = Object.keys(DEEP_TEST_INFO);
 
   return (
     <div className="space-y-4">
+      {/* Warning Banner */}
+      <div className="bg-amber-50 border border-amber-300 rounded-xl p-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-amber-800">
+            Stroop, Flanker, Go/No-Go, Attention Span require laptop/desktop with keyboard. TMT uses TMT-Lite phone app.
+          </p>
+        </div>
+      </div>
+
       {/* Medication Status Banner */}
       <div className={`rounded-xl p-4 ${isOddWeek ? 'bg-orange-50 border border-orange-200' : 'bg-green-50 border border-green-200'}`}>
         <div className="flex items-center gap-3">
@@ -944,53 +988,60 @@ const TestsTab = ({ onLog, currentWeek }) => {
         </div>
       </div>
 
-      {/* This Week's Deep Test */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border-2 border-purple-200">
-        <h3 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
-          <Brain className="w-5 h-5 text-purple-600" />
-          This Week's Deep Test: {deepTestInfo.name}
-        </h3>
-        <p className="text-sm text-gray-600 mb-3">{deepTestInfo.description}</p>
-        
-        <a href={deepTestInfo.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-purple-600 font-medium mb-3">
-          <ExternalLink className="w-4 h-4" />Open Test
-        </a>
-        
-        <div className="bg-gray-50 rounded-lg p-3 mb-3">
-          <strong className="text-sm text-gray-700">Instructions:</strong>
-          <ol className="list-decimal list-inside mt-1 text-sm text-gray-600 space-y-1">
-            {deepTestInfo.instructions.map((inst, i) => <li key={i}>{inst}</li>)}
-          </ol>
-        </div>
-        
-        <div className="space-y-2">
-          {deepTestInfo.fields.map((field, idx) => (
-            <div key={field}>
-              <label className="text-sm text-gray-600">{deepTestInfo.fieldLabels[idx]}</label>
-              <input 
-                type="number" 
-                value={deepTestScores[field] || ''} 
-                onChange={(e) => setDeepTestScores({ ...deepTestScores, [field]: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1" 
-                placeholder="Enter score" 
-              />
+      {/* All Cognitive Tests - Every Sunday */}
+      {allTests.map(testKey => {
+        const testInfo = DEEP_TEST_INFO[testKey];
+        return (
+          <div key={testKey} className="bg-white rounded-xl p-4 shadow-sm border-2 border-purple-200">
+            <h3 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+              <Brain className="w-5 h-5 text-purple-600" />
+              {testInfo.name}
+            </h3>
+            <p className="text-sm text-gray-600 mb-3">{testInfo.description}</p>
+
+            {testInfo.url ? (
+              <a href={testInfo.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-purple-600 font-medium mb-3">
+                <ExternalLink className="w-4 h-4" />Open Test
+              </a>
+            ) : testInfo.note ? (
+              <p className="text-sm text-purple-600 font-medium mb-3">{testInfo.note}</p>
+            ) : null}
+
+            <div className="bg-gray-50 rounded-lg p-3 mb-3">
+              <strong className="text-sm text-gray-700">Instructions:</strong>
+              <ol className="list-decimal list-inside mt-1 text-sm text-gray-600 space-y-1">
+                {testInfo.instructions.map((inst, i) => <li key={i}>{inst}</li>)}
+              </ol>
             </div>
-          ))}
-          <button 
-            onClick={() => { 
-              onLog({ type: 'deepTest', testName: currentDeepTest, value: deepTestScores, medicationStatus, week: currentWeek }); 
-              alert(`Saved ${currentDeepTest} scores (${medicationStatus})`); 
-            }}
-            className="w-full py-2 bg-purple-500 text-white rounded-lg font-medium"
-          >
-            Save {currentDeepTest} Scores
-          </button>
-        </div>
-        
-        <div className="mt-3 text-xs text-gray-500">
-          <strong>Schedule:</strong> TMT (Wk 1-2, 7-8) • N-Back (Wk 3-4, 9-10) • Go/No-Go (Wk 5-6, 11-12)
-        </div>
-      </div>
+
+            <div className="space-y-2">
+              {testInfo.fields.map((field, idx) => (
+                <div key={field}>
+                  <label className="text-sm text-gray-600">{testInfo.fieldLabels[idx]}</label>
+                  <input
+                    type="number"
+                    value={deepTestScores[field] || ''}
+                    onChange={(e) => setDeepTestScores({ ...deepTestScores, [field]: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1"
+                    placeholder="Enter score"
+                  />
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  const scores = {};
+                  testInfo.fields.forEach(f => { scores[f] = deepTestScores[f]; });
+                  onLog({ type: 'deepTest', testName: testKey, value: scores, medicationStatus, week: currentWeek });
+                  alert(`Saved ${testKey} scores (${medicationStatus})`);
+                }}
+                className="w-full py-2 bg-purple-500 text-white rounded-lg font-medium"
+              >
+                Save {testKey} Scores
+              </button>
+            </div>
+          </div>
+        );
+      })}
 
       {/* Grip Strength - 3x/week */}
       <div className="bg-white rounded-xl p-4 shadow-sm">
@@ -1002,29 +1053,29 @@ const TestsTab = ({ onLog, currentWeek }) => {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-sm text-gray-600">Left Hand (kg)</label>
-            <input 
-              type="number" 
-              value={gripStrength.left} 
+            <input
+              type="number"
+              value={gripStrength.left}
               onChange={(e) => setGripStrength({ ...gripStrength, left: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1" 
-              placeholder="Best of 3" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1"
+              placeholder="Best of 3"
             />
           </div>
           <div>
             <label className="text-sm text-gray-600">Right Hand (kg)</label>
-            <input 
-              type="number" 
-              value={gripStrength.right} 
+            <input
+              type="number"
+              value={gripStrength.right}
               onChange={(e) => setGripStrength({ ...gripStrength, right: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1" 
-              placeholder="Best of 3" 
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1"
+              placeholder="Best of 3"
             />
           </div>
         </div>
-        <button 
-          onClick={() => { 
-            onLog({ type: 'gripStrength', value: gripStrength }); 
-            alert(`Logged grip: L=${gripStrength.left}kg, R=${gripStrength.right}kg`); 
+        <button
+          onClick={() => {
+            onLog({ type: 'gripStrength', value: gripStrength });
+            alert(`Logged grip: L=${gripStrength.left}kg, R=${gripStrength.right}kg`);
             setGripStrength({ left: '', right: '' });
           }}
           className="w-full mt-3 py-2 bg-red-500 text-white rounded-lg font-medium"
@@ -1056,27 +1107,6 @@ const TestsTab = ({ onLog, currentWeek }) => {
           <div className="text-lg font-bold">Total: {asrs6Total}/24</div>
           <button onClick={() => { onLog({type:'asrs6',value:asrs6Total,answers:asrs6,medicationStatus}); alert(`Saved ASRS-6: ${asrs6Total}/24 (${medicationStatus})`); }}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium">Save ASRS-6</button>
-        </div>
-      </div>
-
-      {/* Cambridge Brain Sciences */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
-        <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <Brain className="w-5 h-5 text-green-600" />Cambridge Brain Sciences (Weekly)
-        </h3>
-        <a href="https://www.cambridgebrainsciences.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-green-600 font-medium mb-4">
-          <ExternalLink className="w-4 h-4" />Open Cambridge Brain Sciences
-        </a>
-        <div className="space-y-3">
-          {['spatial', 'feature', 'stroop'].map(key => (
-            <div key={key}>
-              <label className="text-sm text-gray-600">{key.charAt(0).toUpperCase() + key.slice(1)} Span Score</label>
-              <input type="number" value={cogScores[key]} onChange={(e) => setCogScores({ ...cogScores, [key]: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1" placeholder="Enter score" />
-            </div>
-          ))}
-          <button onClick={() => { onLog({type:'cognitive',value:cogScores,medicationStatus}); alert('Saved cognitive scores'); }}
-            className="w-full py-2 bg-green-500 text-white rounded-lg font-medium">Save Cognitive Scores</button>
         </div>
       </div>
 
@@ -1558,13 +1588,21 @@ const SetupTab = () => {
             className="flex items-center gap-2 p-3 bg-yellow-50 text-yellow-700 rounded-lg text-sm font-medium">
             <Zap className="w-4 h-4" /> Reaction Test
           </a>
-          <a href="https://www.cambridgebrainsciences.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://3rrzyovd9q.cognition.run" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 p-3 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium">
-            <Brain className="w-4 h-4" /> CBS Tests
+            <Brain className="w-4 h-4" /> Stroop
           </a>
-          <a href="https://www.psytoolkit.org/experiment-library/tmt.html" target="_blank" rel="noopener noreferrer"
+          <a href="https://bc50jfnfsa.cognition.run" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 p-3 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium">
-            <Brain className="w-4 h-4" /> TMT Test
+            <Brain className="w-4 h-4" /> Flanker
+          </a>
+          <a href="https://sketgsdcac.cognition.run" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 p-3 bg-pink-50 text-pink-700 rounded-lg text-sm font-medium">
+            <Brain className="w-4 h-4" /> Go/No-Go
+          </a>
+          <a href="https://g0zegupaji.cognition.run" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 p-3 bg-teal-50 text-teal-700 rounded-lg text-sm font-medium">
+            <Brain className="w-4 h-4" /> Attention Span
           </a>
           <a href="https://cloud.ouraring.com" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 p-3 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
