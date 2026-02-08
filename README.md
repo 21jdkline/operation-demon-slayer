@@ -24,11 +24,14 @@ A personal ADHD protocol tracking app with breathing exercises, workout logging,
 - Home KB/BB
 - Daily Mobility
 
-### Cognitive Tests (Every Sunday)
-- **TMT-A & B** - Trail Making Test via TMT-Lite phone app
-- **Stroop, Flanker, Go/No-Go, Attention Span** - cognition.run (laptop/desktop required)
-- **Reaction Time** - Daily via Human Benchmark
-- **ASRS-6 Questionnaire** - Weekly self-report
+### Cognitive Tests (Every Sunday — All 5 Tests)
+- **TMT-A & B** — Trail Making Test via TMT-Lite phone app
+- **Stroop** — https://3rrzyovd9q.cognition.run (laptop/keyboard required)
+- **Flanker** — https://bc50jfnfsa.cognition.run (laptop/keyboard required)
+- **Go/No-Go** — https://sketgsdcac.cognition.run (laptop/keyboard required)
+- **Attention Span** — https://g0zegupaji.cognition.run (laptop/keyboard required)
+- **Reaction Time** — Daily via Human Benchmark
+- **ASRS-6 Questionnaire** — Weekly self-report
 
 ## 🚀 Quick Start
 

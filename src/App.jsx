@@ -435,48 +435,58 @@ const TodayTab = ({ currentDay, currentWeek, completed, setCompleted, onLog, set
       <div className="bg-white rounded-xl p-4 shadow-sm">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Quick Log</h3>
         <div className="grid grid-cols-4 gap-2 mb-3">
-          {[
-            { id: 'weight', icon: Scale, color: '#00897B', label: 'Weight', prompt: 'Weight (lbs)?', type: 'weight' },
-            { id: 'hrv', icon: Activity, color: '#1565C0', label: 'HRV', prompt: 'Morning HRV (rMSSD)?', type: 'morningHRV' },
-            { id: 'mackenzie', icon: Wind, color: '#1F4E79', label: 'Exhale', prompt: 'Mackenzie exhale (seconds)?', type: 'mackenzieExhale' },
-            { id: 'reaction', icon: Timer, color: '#7B1FA2', label: 'Reaction', prompt: 'Reaction time (ms)?', type: 'reaction' },
-            { id: 'hrr', icon: Heart, color: '#C62828', label: 'HRR', prompt: 'Heart Rate Recovery (bpm drop)?', type: 'hrr' },
-            { id: 'caffeine', icon: Coffee, color: '#795548', label: 'Coffee', prompt: 'Caffeine (mg)?', type: 'caffeine' },
-            { id: 'sauna', icon: Flame, color: '#E65100', label: 'Sauna', prompt: 'Sauna duration (minutes)?', type: 'sauna' },
-          ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => {
-                const val = window.prompt(item.prompt);
-                if (val && !isNaN(val)) {
-                  onLog({ type: item.type, value: parseFloat(val) });
-                  if (item.id !== 'caffeine') setCompleted(prev => ({ ...prev, [item.id]: true }));
-                  window.alert(`Logged ${item.label}: ${val}`);
-                }
-              }}
-              className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100"
-            >
-              <item.icon className="w-5 h-5" style={{ color: item.color }} />
-              <span className="text-xs text-gray-600">{item.label}</span>
-            </button>
-          ))}
-          <button
-            onClick={() => {
+          {/* Row 1 */}
+          <button onClick={() => { const v = window.prompt('Weight (lbs)?'); if (v && !isNaN(v)) { onLog({ type: 'weight', value: parseFloat(v) }); setCompleted(prev => ({ ...prev, weight: true })); window.alert(`Logged weight: ${v} lbs`); }}}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Scale className="w-5 h-5" style={{ color: '#00897B' }} /><span className="text-xs text-gray-600">Weight</span>
+          </button>
+          <button onClick={() => { const v = window.prompt('Morning HRV (rMSSD)?'); if (v && !isNaN(v)) { onLog({ type: 'morningHRV', value: parseFloat(v) }); setCompleted(prev => ({ ...prev, hrv: true })); window.alert(`Logged HRV: ${v}`); }}}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Activity className="w-5 h-5" style={{ color: '#1565C0' }} /><span className="text-xs text-gray-600">HRV</span>
+          </button>
+          <button onClick={() => { const v = window.prompt('Mackenzie exhale (seconds)?'); if (v && !isNaN(v)) { onLog({ type: 'mackenzieExhale', value: parseFloat(v) }); setCompleted(prev => ({ ...prev, mackenzie: true })); window.alert(`Logged exhale: ${v}s`); }}}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Wind className="w-5 h-5" style={{ color: '#1F4E79' }} /><span className="text-xs text-gray-600">Exhale</span>
+          </button>
+          <button onClick={() => { const v = window.prompt('Reaction time (ms)?'); if (v && !isNaN(v)) { onLog({ type: 'reaction', value: parseFloat(v) }); setCompleted(prev => ({ ...prev, reaction: true })); window.alert(`Logged reaction: ${v}ms`); }}}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Timer className="w-5 h-5" style={{ color: '#7B1FA2' }} /><span className="text-xs text-gray-600">Reaction</span>
+          </button>
+          {/* Row 2 */}
+          <button onClick={() => {
               if (window.confirm('Did you use mouth tape last night?')) {
-                onLog({ type: 'mouthTape', value: 'Yes' });
-                setCompleted(prev => ({ ...prev, mouthTapeCheck: true }));
-                window.alert('Logged mouth tape: Yes');
+                onLog({ type: 'mouthTape', value: 'Yes' }); setCompleted(prev => ({ ...prev, mouthTapeCheck: true })); window.alert('Logged mouth tape: Yes');
               } else {
-                onLog({ type: 'mouthTape', value: 'No' });
-                setCompleted(prev => ({ ...prev, mouthTapeCheck: true }));
-                window.alert('Logged mouth tape: No');
+                onLog({ type: 'mouthTape', value: 'No' }); setCompleted(prev => ({ ...prev, mouthTapeCheck: true })); window.alert('Logged mouth tape: No');
               }
             }}
-            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100"
-          >
-            <Moon className="w-5 h-5" style={{ color: '#5E35B1' }} />
-            <span className="text-xs text-gray-600">Tape</span>
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Moon className="w-5 h-5" style={{ color: '#5E35B1' }} /><span className="text-xs text-gray-600">Tape</span>
           </button>
+          <button onClick={() => {
+              const left = window.prompt('Left hand grip (kg)?'); if (!left || isNaN(left)) return;
+              const right = window.prompt('Right hand grip (kg)?'); if (!right || isNaN(right)) return;
+              onLog({ type: 'gripStrength', value: { left: parseFloat(left), right: parseFloat(right) } });
+              setCompleted(prev => ({ ...prev, gripStrength: true }));
+              window.alert(`Logged grip: L=${left}kg, R=${right}kg`);
+            }}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Dumbbell className="w-5 h-5" style={{ color: '#C62828' }} /><span className="text-xs text-gray-600">Grip</span>
+          </button>
+          <button onClick={() => {
+              const peak = window.prompt('Peak HR (bpm)?'); if (!peak || isNaN(peak)) return;
+              const oneMin = window.prompt('HR after 1 minute (bpm)?'); if (!oneMin || isNaN(oneMin)) return;
+              const hrr = parseFloat(peak) - parseFloat(oneMin);
+              onLog({ type: 'hrr', value: hrr, peakHR: parseFloat(peak), oneMinHR: parseFloat(oneMin) });
+              setCompleted(prev => ({ ...prev, hrr: true }));
+              window.alert(`Logged HRR: ${hrr} bpm (${peak} → ${oneMin})`);
+            }}
+            className="flex flex-col items-center gap-1 p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <Heart className="w-5 h-5" style={{ color: '#E53935' }} /><span className="text-xs text-gray-600">HRR</span>
+          </button>
+          <div className="flex flex-col items-center gap-1 p-3 rounded-lg">
+            {/* Placeholder for grid alignment */}
+          </div>
         </div>
         <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nostril Dominance</h4>
         <div className="grid grid-cols-3 gap-2">
@@ -907,10 +917,11 @@ const DEEP_TEST_INFO = {
       'Name the ink color, not the word itself',
       'Go as fast as possible while staying accurate',
       'Complete all trials presented',
-      'Record your score at the end',
+      'Record congruent RT, incongruent RT, and accuracy',
     ],
-    fields: ['stroopScore'],
-    fieldLabels: ['Stroop Score'],
+    fields: ['stroopCongruent', 'stroopIncongruent', 'stroopAccuracy'],
+    fieldLabels: ['Congruent RT (ms)', 'Incongruent RT (ms)', 'Accuracy (%)'],
+    computedField: { label: 'Stroop Effect', calc: (s) => { const c = parseFloat(s.stroopCongruent); const i = parseFloat(s.stroopIncongruent); return (!isNaN(c) && !isNaN(i)) ? i - c : null; }, key: 'stroopEffect' },
   },
   'Flanker': {
     name: 'Flanker Test',
@@ -920,10 +931,11 @@ const DEEP_TEST_INFO = {
       'Focus on the center arrow/stimulus',
       'Indicate the direction of the center target',
       'Ignore the flanking distractors',
-      'Record your accuracy and reaction time',
+      'Record congruent RT, incongruent RT, and accuracy',
     ],
-    fields: ['flankerAcc', 'flankerRT'],
-    fieldLabels: ['Accuracy (%)', 'Avg Reaction Time (ms)'],
+    fields: ['flankerCongruent', 'flankerIncongruent', 'flankerAccuracy'],
+    fieldLabels: ['Congruent RT (ms)', 'Incongruent RT (ms)', 'Accuracy (%)'],
+    computedField: { label: 'Flanker Effect', calc: (s) => { const c = parseFloat(s.flankerCongruent); const i = parseFloat(s.flankerIncongruent); return (!isNaN(c) && !isNaN(i)) ? i - c : null; }, key: 'flankerEffect' },
   },
   'Go/No-Go': {
     name: 'Go/No-Go Response Inhibition Test',
@@ -933,10 +945,10 @@ const DEEP_TEST_INFO = {
       'Press spacebar for "Go" stimuli (e.g., green)',
       'Do NOT press for "No-Go" stimuli (e.g., red)',
       'Go as fast as possible while minimizing errors',
-      'Record reaction time and commission errors (false alarms)',
+      'Record mean RT, commission errors, and accuracy',
     ],
-    fields: ['goNoGoRT', 'goNoGoErrors'],
-    fieldLabels: ['Avg Reaction Time (ms)', 'Commission Errors'],
+    fields: ['gonogoRT', 'gonogoErrors', 'gonogoAccuracy'],
+    fieldLabels: ['Mean RT (ms)', 'Commission Errors', 'Accuracy (%)'],
   },
   'Attention Span': {
     name: 'Attention Span Test',
@@ -946,10 +958,10 @@ const DEEP_TEST_INFO = {
       'Follow the on-screen instructions carefully',
       'Stay focused for the entire duration',
       'Respond as quickly and accurately as possible',
-      'Record your final score',
+      'Record your accuracy and mean RT',
     ],
-    fields: ['attentionScore'],
-    fieldLabels: ['Attention Score'],
+    fields: ['attentionAccuracy', 'attentionRT'],
+    fieldLabels: ['Accuracy (%)', 'Mean RT (ms)'],
   },
 };
 
@@ -957,11 +969,54 @@ const TestsTab = ({ onLog, currentWeek }) => {
   const [asrs6, setAsrs6] = useState(Array(6).fill(null));
   const [deepTestScores, setDeepTestScores] = useState({});
   const [gripStrength, setGripStrength] = useState({ left: '', right: '' });
+  const [weeklyNotes, setWeeklyNotes] = useState('');
 
   const asrs6Total = asrs6.reduce((a, b) => a + (b || 0), 0);
   const isOddWeek = currentWeek % 2 === 1;
   const medicationStatus = isOddWeek ? 'UNMEDICATED' : 'MEDICATED';
   const allTests = Object.keys(DEEP_TEST_INFO);
+
+  const getComputedValue = (testInfo) => {
+    if (!testInfo.computedField) return null;
+    return testInfo.computedField.calc(deepTestScores);
+  };
+
+  const handleSaveAllWeeklyTests = () => {
+    const stroopEffect = getComputedValue(DEEP_TEST_INFO['Stroop']);
+    const flankerEffect = getComputedValue(DEEP_TEST_INFO['Flanker']);
+    const payload = {
+      sheet: 'WeeklyTests',
+      data: {
+        date: new Date().toISOString().split('T')[0],
+        week: currentWeek,
+        medicated: !isOddWeek,
+        metric: 'weeklyTests',
+        value: {
+          tmtA: deepTestScores.tmtA ? parseFloat(deepTestScores.tmtA) : null,
+          tmtB: deepTestScores.tmtB ? parseFloat(deepTestScores.tmtB) : null,
+          stroopCongruent: deepTestScores.stroopCongruent ? parseFloat(deepTestScores.stroopCongruent) : null,
+          stroopIncongruent: deepTestScores.stroopIncongruent ? parseFloat(deepTestScores.stroopIncongruent) : null,
+          stroopAccuracy: deepTestScores.stroopAccuracy ? parseFloat(deepTestScores.stroopAccuracy) : null,
+          stroopEffect: stroopEffect,
+          flankerCongruent: deepTestScores.flankerCongruent ? parseFloat(deepTestScores.flankerCongruent) : null,
+          flankerIncongruent: deepTestScores.flankerIncongruent ? parseFloat(deepTestScores.flankerIncongruent) : null,
+          flankerAccuracy: deepTestScores.flankerAccuracy ? parseFloat(deepTestScores.flankerAccuracy) : null,
+          flankerEffect: flankerEffect,
+          gonogoRT: deepTestScores.gonogoRT ? parseFloat(deepTestScores.gonogoRT) : null,
+          gonogoErrors: deepTestScores.gonogoErrors ? parseFloat(deepTestScores.gonogoErrors) : null,
+          gonogoAccuracy: deepTestScores.gonogoAccuracy ? parseFloat(deepTestScores.gonogoAccuracy) : null,
+          attentionAccuracy: deepTestScores.attentionAccuracy ? parseFloat(deepTestScores.attentionAccuracy) : null,
+          attentionRT: deepTestScores.attentionRT ? parseFloat(deepTestScores.attentionRT) : null,
+          asrs6Total: asrs6Total,
+          asrs6Items: asrs6,
+        },
+        notes: weeklyNotes,
+      },
+      timestamp: new Date().toISOString(),
+    };
+    onLog(payload);
+    alert(`Saved all weekly tests — Week ${currentWeek} (${medicationStatus})`);
+  };
 
   return (
     <div className="space-y-4">
@@ -970,7 +1025,7 @@ const TestsTab = ({ onLog, currentWeek }) => {
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-amber-800">
-            Stroop, Flanker, Go/No-Go, Attention Span require laptop/desktop with keyboard. TMT uses TMT-Lite phone app.
+            Stroop, Flanker, Go/No-Go, and Attention Span require laptop/desktop with keyboard. TMT uses TMT-Lite phone app.
           </p>
         </div>
       </div>
@@ -991,6 +1046,7 @@ const TestsTab = ({ onLog, currentWeek }) => {
       {/* All Cognitive Tests - Every Sunday */}
       {allTests.map(testKey => {
         const testInfo = DEEP_TEST_INFO[testKey];
+        const computedVal = getComputedValue(testInfo);
         return (
           <div key={testKey} className="bg-white rounded-xl p-4 shadow-sm border-2 border-purple-200">
             <h3 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
@@ -1021,27 +1077,46 @@ const TestsTab = ({ onLog, currentWeek }) => {
                   <input
                     type="number"
                     value={deepTestScores[field] || ''}
-                    onChange={(e) => setDeepTestScores({ ...deepTestScores, [field]: e.target.value })}
+                    onChange={(e) => setDeepTestScores(prev => ({ ...prev, [field]: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-1"
                     placeholder="Enter score"
                   />
                 </div>
               ))}
-              <button
-                onClick={() => {
-                  const scores = {};
-                  testInfo.fields.forEach(f => { scores[f] = deepTestScores[f]; });
-                  onLog({ type: 'deepTest', testName: testKey, value: scores, medicationStatus, week: currentWeek });
-                  alert(`Saved ${testKey} scores (${medicationStatus})`);
-                }}
-                className="w-full py-2 bg-purple-500 text-white rounded-lg font-medium"
-              >
-                Save {testKey} Scores
-              </button>
+              {testInfo.computedField && computedVal !== null && (
+                <div className="bg-purple-50 rounded-lg p-3 flex items-center justify-between">
+                  <span className="text-sm font-medium text-purple-700">{testInfo.computedField.label}</span>
+                  <span className="text-lg font-bold text-purple-800">{computedVal} ms</span>
+                </div>
+              )}
             </div>
           </div>
         );
       })}
+
+      {/* ASRS-6 */}
+      <div className="bg-white rounded-xl p-4 shadow-sm">
+        <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <ClipboardList className="w-5 h-5 text-blue-600" />ASRS-6 (Weekly)
+        </h3>
+        <p className="text-sm text-gray-600 mb-3">Rate 0-4: 0=Never, 1=Rarely, 2=Sometimes, 3=Often, 4=Very Often</p>
+        <div className="space-y-3">
+          {ASRS6_QUESTIONS.map((q, idx) => (
+            <div key={idx} className="border-b border-gray-100 pb-3">
+              <p className="text-sm text-gray-700 mb-2">{idx + 1}. {q}</p>
+              <div className="flex gap-2">
+                {[0, 1, 2, 3, 4].map((score) => (
+                  <button key={score} onClick={() => { const n = [...asrs6]; n[idx] = score; setAsrs6(n); }}
+                    className={`w-10 h-10 rounded-lg font-medium ${asrs6[idx] === score ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>{score}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 flex items-center justify-between">
+          <div className="text-lg font-bold">Total: {asrs6Total}/24</div>
+        </div>
+      </div>
 
       {/* Grip Strength - 3x/week */}
       <div className="bg-white rounded-xl p-4 shadow-sm">
@@ -1084,32 +1159,6 @@ const TestsTab = ({ onLog, currentWeek }) => {
         </button>
       </div>
 
-      {/* ASRS-6 */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
-        <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <ClipboardList className="w-5 h-5 text-blue-600" />ASRS-6 (Weekly)
-        </h3>
-        <p className="text-sm text-gray-600 mb-3">Rate 0-4: 0=Never, 1=Rarely, 2=Sometimes, 3=Often, 4=Very Often</p>
-        <div className="space-y-3">
-          {ASRS6_QUESTIONS.map((q, idx) => (
-            <div key={idx} className="border-b border-gray-100 pb-3">
-              <p className="text-sm text-gray-700 mb-2">{idx + 1}. {q}</p>
-              <div className="flex gap-2">
-                {[0, 1, 2, 3, 4].map((score) => (
-                  <button key={score} onClick={() => { const n = [...asrs6]; n[idx] = score; setAsrs6(n); }}
-                    className={`w-10 h-10 rounded-lg font-medium ${asrs6[idx] === score ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>{score}</button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 flex items-center justify-between">
-          <div className="text-lg font-bold">Total: {asrs6Total}/24</div>
-          <button onClick={() => { onLog({type:'asrs6',value:asrs6Total,answers:asrs6,medicationStatus}); alert(`Saved ASRS-6: ${asrs6Total}/24 (${medicationStatus})`); }}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium">Save ASRS-6</button>
-        </div>
-      </div>
-
       {/* Reaction Time */}
       <div className="bg-white rounded-xl p-4 shadow-sm">
         <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
@@ -1124,6 +1173,28 @@ const TestsTab = ({ onLog, currentWeek }) => {
           <button onClick={() => { const i = document.getElementById('reactionInput'); if(i.value) { onLog({type:'reaction',value:parseFloat(i.value)}); alert(`Logged: ${i.value}ms`); i.value=''; }}}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg font-medium">Save</button>
         </div>
+      </div>
+
+      {/* Save All Weekly Tests */}
+      <div className="bg-white rounded-xl p-4 shadow-sm border-2 border-green-300">
+        <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <Download className="w-5 h-5 text-green-600" />
+          Save All Weekly Tests
+        </h3>
+        <p className="text-sm text-gray-600 mb-3">Submit all cognitive test scores, ASRS-6, and notes for Week {currentWeek} ({medicationStatus}).</p>
+        <textarea
+          value={weeklyNotes}
+          onChange={(e) => setWeeklyNotes(e.target.value)}
+          placeholder="Optional notes about this week's testing..."
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3 text-sm"
+          rows={2}
+        />
+        <button
+          onClick={handleSaveAllWeeklyTests}
+          className="w-full py-3 bg-green-600 text-white rounded-lg font-bold text-lg"
+        >
+          Save Week {currentWeek} Tests ({medicationStatus})
+        </button>
       </div>
     </div>
   );
